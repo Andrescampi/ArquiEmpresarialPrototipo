@@ -1,0 +1,540 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CAF - Centro de Acondicionamiento Físico</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #f5f7fa 0%, #e8ecf1 100%);
+            padding: 20px;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            animation: fadeIn 0.5s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .header {
+            background: linear-gradient(135deg, #1e5a96 0%, #2d7ab9 100%);
+            padding: 25px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            color: white;
+        }
+
+        .logo {
+            font-size: 28px;
+            font-weight: bold;
+            letter-spacing: 2px;
+        }
+
+        .status-indicator {
+            width: 50px;
+            height: 50px;
+            background: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .status-indicator:hover {
+            transform: scale(1.1);
+            box-shadow: 0 5px 15px rgba(255, 255, 255, 0.3);
+        }
+
+        .status-indicator.active {
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% {
+                box-shadow: 0 0 0 0 rgba(255, 255, 255, 0.7);
+            }
+            50% {
+                box-shadow: 0 0 0 10px rgba(255, 255, 255, 0);
+            }
+        }
+
+        .content {
+            padding: 25px;
+        }
+
+        .section {
+            margin-bottom: 25px;
+        }
+
+        .section-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 15px;
+        }
+
+        .calendar-week {
+            display: flex;
+            justify-content: space-between;
+            gap: 10px;
+        }
+
+        .day-box {
+            flex: 1;
+            text-align: center;
+            padding: 15px 5px;
+            border: 2px solid #e0e0e0;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background: white;
+        }
+
+        .day-box:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(30, 90, 150, 0.2);
+        }
+
+        .day-label {
+            font-size: 14px;
+            font-weight: 600;
+            color: #666;
+            margin-bottom: 8px;
+        }
+
+        .check-circle {
+            width: 30px;
+            height: 30px;
+            border: 3px solid #e0e0e0;
+            border-radius: 50%;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+        }
+
+        .day-box.completed .check-circle {
+            background: #4caf50;
+            border-color: #4caf50;
+            animation: checkPop 0.3s ease;
+        }
+
+        .day-box.completed .check-circle::after {
+            content: '✓';
+            color: white;
+            font-size: 18px;
+            font-weight: bold;
+        }
+
+        @keyframes checkPop {
+            0% {
+                transform: scale(0);
+            }
+            50% {
+                transform: scale(1.2);
+            }
+            100% {
+                transform: scale(1);
+            }
+        }
+
+        .stats-capacity {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+
+        .capacity-box {
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            padding: 20px;
+            border-radius: 15px;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        .capacity-box:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .capacity-circle {
+            width: 100px;
+            height: 100px;
+            margin: 0 auto 15px;
+            position: relative;
+        }
+
+        .capacity-percentage {
+            font-size: 32px;
+            font-weight: bold;
+            color: #1e5a96;
+        }
+
+        .stats-box {
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            padding: 20px;
+            border-radius: 15px;
+        }
+
+        .stat-item {
+            margin-bottom: 12px;
+            font-size: 14px;
+            color: #555;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .stat-label {
+            font-weight: 600;
+        }
+
+        .caf-button {
+            width: 100%;
+            background: linear-gradient(135deg, #1e5a96 0%, #2d7ab9 100%);
+            color: white;
+            border: none;
+            padding: 18px;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 15px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .caf-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(30, 90, 150, 0.3);
+        }
+
+        .caf-button:active {
+            transform: translateY(0);
+        }
+
+        .routines-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .routine-item {
+            display: flex;
+            align-items: center;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .routine-item:hover {
+            background: #e9ecef;
+            transform: translateX(5px);
+        }
+
+        .routine-checkbox {
+            width: 25px;
+            height: 25px;
+            border: 2px solid #1e5a96;
+            border-radius: 50%;
+            margin-right: 15px;
+            transition: all 0.3s ease;
+        }
+
+        .routine-item.completed .routine-checkbox {
+            background: #1e5a96;
+            animation: checkPop 0.3s ease;
+        }
+
+        .routine-item.completed .routine-checkbox::after {
+            content: '✓';
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+        }
+
+        .routine-info {
+            flex: 1;
+        }
+
+        .routine-name {
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 3px;
+        }
+
+        .routine-day {
+            font-size: 12px;
+            color: #888;
+        }
+
+        .toast {
+            position: fixed;
+            bottom: -100px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: linear-gradient(135deg, #4caf50 0%, #45a049 100%);
+            color: white;
+            padding: 18px 30px;
+            border-radius: 12px;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+            transition: bottom 0.4s ease;
+            z-index: 1000;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .toast.show {
+            bottom: 30px;
+        }
+
+        .toast-icon {
+            font-size: 24px;
+        }
+
+        @media (max-width: 600px) {
+            .stats-capacity {
+                grid-template-columns: 1fr;
+            }
+
+            .day-label {
+                font-size: 12px;
+            }
+
+            .check-circle {
+                width: 25px;
+                height: 25px;
+            }
+        }
+
+        .progress-ring {
+            transform: rotate(-90deg);
+        }
+
+        .progress-ring-circle {
+            transition: stroke-dashoffset 0.5s ease;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="logo">CAF</div>
+            <div class="status-indicator" id="statusIndicator" title="Estado: Inactivo">
+                🏋️
+            </div>
+        </div>
+
+        <div class="content">
+            <div class="section">
+                <div class="section-title">Calendario Semanal</div>
+                <div class="calendar-week">
+                    <div class="day-box completed" data-day="L">
+                        <div class="day-label">L</div>
+                        <div class="check-circle"></div>
+                    </div>
+                    <div class="day-box completed" data-day="M">
+                        <div class="day-label">M</div>
+                        <div class="check-circle"></div>
+                    </div>
+                    <div class="day-box" data-day="X">
+                        <div class="day-label">X</div>
+                        <div class="check-circle"></div>
+                    </div>
+                    <div class="day-box completed" data-day="J">
+                        <div class="day-label">J</div>
+                        <div class="check-circle"></div>
+                    </div>
+                    <div class="day-box" data-day="V">
+                        <div class="day-label">V</div>
+                        <div class="check-circle"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="section">
+                <div class="stats-capacity">
+                    <div class="capacity-box">
+                        <div class="section-title">Capacidad Actual</div>
+                        <div class="capacity-circle">
+                            <svg width="100" height="100">
+                                <circle cx="50" cy="50" r="45" fill="none" stroke="#e0e0e0" stroke-width="8"/>
+                                <circle id="capacityCircle" class="progress-ring-circle" cx="50" cy="50" r="45" fill="none" stroke="#1e5a96" stroke-width="8" stroke-dasharray="283" stroke-dashoffset="218" style="transform: rotate(-90deg); transform-origin: 50% 50%;"/>
+                            </svg>
+                            <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);">
+                                <div class="capacity-percentage">23%</div>
+                            </div>
+                        </div>
+                        <button class="caf-button" id="cafButton">Ingresar al CAF</button>
+                    </div>
+
+                    <div class="stats-box">
+                        <div class="section-title">Estadísticas</div>
+                        <div class="stat-item">
+                            <span class="stat-label">Peso:</span>
+                            <span>X kg</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">Altura:</span>
+                            <span>X cm</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">BMI:</span>
+                            <span>x</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">Masa Muscular:</span>
+                            <span>x</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">Grasa Corporal:</span>
+                            <span>x</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="section">
+                <div class="section-title">Mis Rutinas</div>
+                <div class="routines-list">
+                    <div class="routine-item" data-routine="tren-superior">
+                        <div class="routine-checkbox"></div>
+                        <div class="routine-info">
+                            <div class="routine-name">Tren-superior</div>
+                            <div class="routine-day">Lunes</div>
+                        </div>
+                    </div>
+                    <div class="routine-item" data-routine="tren-inferior">
+                        <div class="routine-checkbox"></div>
+                        <div class="routine-info">
+                            <div class="routine-name">Tren-inferior</div>
+                            <div class="routine-day">Martes</div>
+                        </div>
+                    </div>
+                    <div class="routine-item" data-routine="cardio">
+                        <div class="routine-checkbox"></div>
+                        <div class="routine-info">
+                            <div class="routine-name">Cardio</div>
+                            <div class="routine-day">Jueves</div>
+                        </div>
+                    </div>
+                    <div class="routine-item" data-routine="core">
+                        <div class="routine-checkbox"></div>
+                        <div class="routine-info">
+                            <div class="routine-name">Core</div>
+                            <div class="routine-day">Viernes</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="toast" id="toast">
+        <span class="toast-icon">💪</span>
+        <span id="toastMessage">¡Registro exitoso!</span>
+    </div>
+
+    <script>
+        let isWorking = false;
+
+        const cafButton = document.getElementById('cafButton');
+        const statusIndicator = document.getElementById('statusIndicator');
+        const toast = document.getElementById('toast');
+        const toastMessage = document.getElementById('toastMessage');
+
+        function showToast(message) {
+            toastMessage.textContent = message;
+            toast.classList.add('show');
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 3000);
+        }
+
+        cafButton.addEventListener('click', () => {
+            if (!isWorking) {
+                isWorking = true;
+                statusIndicator.classList.add('active');
+                statusIndicator.style.background = '#4caf50';
+                statusIndicator.title = 'Estado: Entrenando';
+                cafButton.textContent = 'Finalizar Entrenamiento';
+                showToast('¡Entrenamiento iniciado! 💪');
+            } else {
+                isWorking = false;
+                statusIndicator.classList.remove('active');
+                statusIndicator.style.background = 'white';
+                statusIndicator.title = 'Estado: Inactivo';
+                cafButton.textContent = 'Ingresar al CAF';
+                showToast('¡Entrenamiento finalizado! 🎉');
+            }
+        });
+
+        const dayBoxes = document.querySelectorAll('.day-box');
+        dayBoxes.forEach(box => {
+            box.addEventListener('click', () => {
+                box.classList.toggle('completed');
+                if (box.classList.contains('completed')) {
+                    showToast(`✓ ${box.dataset.day} marcado como completado`);
+                } else {
+                    showToast(`${box.dataset.day} desmarcado`);
+                }
+            });
+        });
+
+        const routineItems = document.querySelectorAll('.routine-item');
+        routineItems.forEach(item => {
+            item.addEventListener('click', () => {
+                item.classList.toggle('completed');
+                const routineName = item.querySelector('.routine-name').textContent;
+                if (item.classList.contains('completed')) {
+                    showToast(`✓ ${routineName} completada`);
+                } else {
+                    showToast(`${routineName} pendiente`);
+                }
+            });
+        });
+
+        statusIndicator.addEventListener('click', () => {
+            if (!isWorking) {
+                showToast('Presiona "Ingresar al CAF" para comenzar');
+            } else {
+                showToast('Entrenamiento en progreso 🔥');
+            }
+        });
+    </script>
+</body>
+</html>
